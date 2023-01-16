@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace apicea.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api-viaticos/[controller]")]
     [ApiController]
     public class DeptosController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace apicea.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeptoUe>>> GetAll()
         {
-            var result = await dbContext.DeptosUe.ToListAsync();
+            var result = await dbContext.DeptosUe.OrderBy(d => d.IdCea).ToListAsync();
             return Ok(result);
         }
 

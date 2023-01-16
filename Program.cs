@@ -1,5 +1,8 @@
 using apicea.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,17 +16,55 @@ builder.Services.AddDbContext<DataContext>(
         opt => opt.UseOracle(builder.Configuration.GetConnectionString("OracleConnection"),
             b => b.UseOracleSQLCompatibility("11")));
 
+builder.Services.AddCors(op =>
+{
+    op.AddDefaultPolicy(b =>
+    {
+        b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o =>
+{
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true
+    };
+});
+
+builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 
-app.UseAuthorization();
-
+app.UseSwagger();
+app.UseSwaggerUI();
+//app.UseAuthorization();
+app.UseCors();
 app.MapControllers();
+
+app.UseRouting();
+
+//Authentication Middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

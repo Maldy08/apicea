@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace apicea.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api-viaticos/[controller]")]
     [ApiController]
     public class EmpleadosController : ControllerBase
     {

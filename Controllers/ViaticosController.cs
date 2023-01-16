@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace apicea.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api-viaticos/[controller]")]
     [ApiController]
     public class ViaticosController : ControllerBase
     {
@@ -18,14 +18,14 @@ namespace apicea.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet("ejercicio/oficina")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Viaticos>>> GetAll(int ejercicio,int oficina)
         {
             var result = await dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina ).ToListAsync();
             return Ok(result);
         }
 
-        [HttpGet("ejercicio/oficina/noviat")]
+        [HttpGet("{ejercicio}/{oficina}/{noviat}")]
         public async Task<ActionResult<IEnumerable<Viaticos>>> GetAllByEjercicioOficinaNoviat(int ejercicio, int oficina, int noviat)
         {
             var result = await dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina
@@ -33,14 +33,14 @@ namespace apicea.Controllers
             return Ok(result);
         }
 
-        [HttpGet("consecutivo/ejercicio/oficina")]
+        [HttpGet("{consecutivo}/{ejercicio}/{oficina}")]
         public  ActionResult<IEnumerable<Viaticos>> GetNoViat(int ejercicio, int oficina)
         {
             var result = dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina).Select(v => v.NoViat).Max();
             return Ok(result);
         }
 
-        [HttpGet("ejercicio/empleado")]
+        [HttpGet("{ejercicio}/{empleado}")]
         public async Task<ActionResult<IEnumerable<Viaticos>>> GetAllByEjercicioDepto(int ejercicio, int empleado)
         {
             var result = await dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.NoEmp == empleado).ToListAsync();
@@ -63,7 +63,7 @@ namespace apicea.Controllers
             }
         }
 
-        [HttpDelete("ejercicio/oficina/noviat")]
+        [HttpDelete]
         public async Task<ActionResult<Viaticos>> Delete(int ejercicio, int oficina, int noviat)
         {
             var result = await dbContext.Viaticos.FindAsync(oficina, ejercicio, noviat);
@@ -86,6 +86,13 @@ namespace apicea.Controllers
             
             else
                 return BadRequest("registro no encontrado");
+        }
+
+        [HttpGet("lista-viaticos-empleado/{ejercicio}/{empleado}")]
+        public async Task<ActionResult<IEnumerable<ListaViaticosPorEmpleado>>> ListaViaticosPorEmpleado(int ejercicio, int empleado)
+        {
+            var result = await dbContext.listaViaticosPorEmpleados.FromSqlInterpolated($"select * from table (F_LISTAVIATICOSXEMP({ejercicio},{empleado}))").ToListAsync();
+            return Ok(result);
         }
         
     }
