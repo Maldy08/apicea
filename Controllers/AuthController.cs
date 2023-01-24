@@ -44,7 +44,7 @@ namespace apicea.Controllers
             return Ok(result);
         }
 
-        [HttpGet("usuarioById")]
+        [HttpGet("usuarioById/{id:int}")]
         public async Task<ActionResult<Usuarios>> GetUsuarioById(int id)
         {
             var result = await dbContext.Usuarios.FirstOrDefaultAsync(u => u.Usuario == id);
@@ -86,7 +86,9 @@ namespace apicea.Controllers
                     DeptoDescripcion = result.DeptoDescripcion,
                     NombreCompleto = result.NombreCompleto,
                     IdPue = result.IdPue,
-                    DescripcionPuesto = result.Descripcion
+                    DescripcionPuesto = result.Descripcion,
+                    Municipio= result.Municipio,
+                    Oficina= result.Oficina,
                 };
             }
             else return null;
@@ -171,5 +173,7 @@ namespace apicea.Controllers
         public string NombreCompleto { get; set; } = string.Empty;
         public int IdPue { get; set; }
         public string DescripcionPuesto{ get; set; } = string.Empty;
+        public int Municipio { get; set; }
+        public int Oficina { get; set; }
     }
 }

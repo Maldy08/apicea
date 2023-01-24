@@ -33,7 +33,7 @@ namespace apicea.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{consecutivo}/{ejercicio}/{oficina}")]
+        [HttpGet("get-consecutivo/{ejercicio:int}/{oficina:int}")]
         public  ActionResult<IEnumerable<Viaticos>> GetNoViat(int ejercicio, int oficina)
         {
             var result = dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina).Select(v => v.NoViat).Max();
@@ -88,7 +88,7 @@ namespace apicea.Controllers
                 return BadRequest("registro no encontrado");
         }
 
-        [HttpGet("lista-viaticos-empleado/{ejercicio}/{empleado}")]
+        [HttpGet("lista-viaticos-empleado/{ejercicio:int}/{empleado:int}")]
         public async Task<ActionResult<IEnumerable<ListaViaticosPorEmpleado>>> ListaViaticosPorEmpleado(int ejercicio, int empleado)
         {
             var result = await dbContext.listaViaticosPorEmpleados.FromSqlInterpolated($"select * from table (F_LISTAVIATICOSXEMP({ejercicio},{empleado}))").ToListAsync();

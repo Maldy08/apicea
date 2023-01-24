@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace apicea.Controllers
 {
-    [Route("api-viaticos/[controller]")]
+    [Route("api-viaticos/Ciudades")]
     [ApiController]
     public class ViaticoCiudadesController : ControllerBase
     {
@@ -20,14 +20,14 @@ namespace apicea.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ViaticosCiudad>>> GetAll()
         {
-            var result = await dbContext.ViaticosCiudades.ToListAsync();
+            var result = await dbContext.ViaticosCiudades.OrderBy(c => c.IdCiudad).ToListAsync();
             return Ok(result);
         }
 
-        [HttpGet("idestado")]
-        public async Task<ActionResult<IEnumerable<ViaticosCiudad>>> GetByEstado(int idestado)
+        [HttpGet("ByIdestado/{id:int}")]
+        public async Task<ActionResult<IEnumerable<ViaticosCiudad>>> GetByEstado(int id)
         {
-            var result = await dbContext.ViaticosCiudades.Where(v => v.IdEstado== idestado).ToListAsync();  
+            var result = await dbContext.ViaticosCiudades.Where(v => v.IdEstado== id).ToListAsync();  
             return Ok(result);
         }
     }

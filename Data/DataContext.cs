@@ -20,6 +20,7 @@ namespace apicea.Data
         public DbSet<ViaticosPais> ViaticosPaises { get;set; }
         public DbSet<ViaticosPart> ViaticosPartidas { get; set; }
         public DbSet<ListaViaticosPorEmpleado> listaViaticosPorEmpleados { get;set; }
+        public DbSet<VistaEmpleados> VistaEmpleados { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -59,6 +60,7 @@ namespace apicea.Data
                 entity.Property(e => e.Depto).HasPrecision(2).HasColumnName("DEPTO");
                 entity.Property(e => e.Obra).HasPrecision(6).HasColumnName("OBRA");
                 entity.Property(e => e.DeptoPpto).HasPrecision(2).HasColumnName("DEPTOPPTO");
+                entity.Property(e => e.DeptoComi).HasPrecision(2).HasColumnName("DEPTOCOMI");
                 entity.Property(e => e.Municipio).HasPrecision(1).HasColumnName("MUNICIPIO");
                 entity.Property(e => e.Activo).HasMaxLength(2).HasColumnName("ACTIVO");
             });
@@ -89,7 +91,7 @@ namespace apicea.Data
                 entity.Property(e => e.Caja).HasPrecision(2).HasColumnName("CAJA");
                 entity.Property(e => e.CajaVale).HasPrecision(5).HasColumnName("CAJA_VALE");
                 entity.Property(e => e.CajaRepo).HasPrecision(5).HasColumnName("CAJA_REPO");
-                entity.Property(e => e.NoEmpCea).HasPrecision(4).HasColumnName("NOEMP_CREA");
+                entity.Property(e => e.NoEmpCrea).HasPrecision(4).HasColumnName("NOEMP_CREA");
                 entity.Property(e => e.InforResul).HasMaxLength(500).HasColumnName("INFOR_RESUL");
 
             });
@@ -120,136 +122,21 @@ namespace apicea.Data
             modelBuilder.Entity<Usuarios>(entity =>
             {
                 entity.HasNoKey();
-
                 entity.ToView("VS_USUARIOS");
-
-                entity.Property(e => e.Activo)
-                    .HasPrecision(1)
-                    .HasColumnName("ACTIVO");
-
-                //entity.Property(e => e.Activos)
-                //    .HasPrecision(1)
-                //    .HasColumnName("ACTIVOS");
-
-                //entity.Property(e => e.ActivosNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("ACTIVOS_NIVEL");
-
-                //entity.Property(e => e.Almacen)
-                //    .HasPrecision(1)
-                //    .HasColumnName("ALMACEN");
-
-                //entity.Property(e => e.AlmacenNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("ALMACEN_NIVEL");
-
-                //entity.Property(e => e.Bd)
-                //    .HasPrecision(1)
-                //    .HasColumnName("BD");
-
-                //entity.Property(e => e.Caja)
-                //    .HasPrecision(1)
-                //    .HasColumnName("CAJA");
-
-                //entity.Property(e => e.CajaNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("CAJA_NIVEL");
-
-                //entity.Property(e => e.Compras)
-                //    .HasPrecision(1)
-                //    .HasColumnName("COMPRAS");
-
-                //entity.Property(e => e.ComprasNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("COMPRAS_NIVEL");
-
-                //entity.Property(e => e.Contabilidad)
-                //    .HasPrecision(1)
-                //    .HasColumnName("CONTABILIDAD");
-
-                //entity.Property(e => e.ContabilidadNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("CONTABILIDAD_NIVEL");
-
-                entity.Property(e => e.Depto)
-                    .HasPrecision(4)
-                    .HasColumnName("DEPTO");
-
-                entity.Property(e => e.DeptoDescripcion)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("DEPTO_DESCRIPCION");
-
-                entity.Property(e => e.Descripcion)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("DESCRIPCION");
-
-                entity.Property(e => e.IdPue)
-                    .HasPrecision(3)
-                    .HasColumnName("ID_PUE");
-
-                entity.Property(e => e.Login)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("LOGIN");
-
-                entity.Property(e => e.NoEmpleado)
-                    .HasPrecision(4)
-                    .HasColumnName("NO_EMPLEADO");
-
-                entity.Property(e => e.NombreCompleto)
-                    .HasMaxLength(152)
-                    .IsUnicode(false)
-                    .HasColumnName("NOMBRE_COMPLETO");
-
-                //entity.Property(e => e.Nominas)
-                //    .HasPrecision(1)
-                //    .HasColumnName("NOMINAS");
-
-                //entity.Property(e => e.NominasNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("NOMINAS_NIVEL");
-
-                entity.Property(e => e.Pass)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("PASS");
-
-                //entity.Property(e => e.Polnom)
-                //    .HasMaxLength(100)
-                //    .IsUnicode(false)
-                //    .HasColumnName("POLNOM");
-
-                //entity.Property(e => e.Presupuestos)
-                //    .HasPrecision(1)
-                //    .HasColumnName("PRESUPUESTOS");
-
-                //entity.Property(e => e.PresupuestosNivel)
-                //    .HasPrecision(1)
-                 //   .HasColumnName("PRESUPUESTOS_NIVEL");
-
-                entity.Property(e => e.Usuario)
-                    .HasPrecision(2)
-                    .HasColumnName("USUARIO");
-
-                //entity.Property(e => e.Vales)
-                //    .HasPrecision(1)
-                //    .HasColumnName("VALES");
-
-                //entity.Property(e => e.ValesNivel)
-                //    .HasPrecision(1)
-                //    .HasColumnName("VALES_NIVEL");
-
-                entity.Property(e => e.Viaticos)
-                    .HasPrecision(1)
-                    .HasColumnName("VIATICOS");
-
-                entity.Property(e => e.ViaticosNivel)
-                    .HasPrecision(1)
-                    .HasColumnName("VIATICOS_NIVEL");
+                entity.Property(e => e.Activo).HasPrecision(1).HasColumnName("ACTIVO");
+                entity.Property(e => e.Depto).HasPrecision(4).HasColumnName("DEPTO");
+                entity.Property(e => e.DeptoDescripcion).IsRequired().HasMaxLength(100).IsUnicode(false).HasColumnName("DEPTO_DESCRIPCION");
+                entity.Property(e => e.Descripcion).IsRequired().HasMaxLength(100).IsUnicode(false).HasColumnName("DESCRIPCION");
+                entity.Property(e => e.IdPue).HasPrecision(3).HasColumnName("ID_PUE");
+                entity.Property(e => e.Login).HasMaxLength(20).IsUnicode(false).HasColumnName("LOGIN");
+                entity.Property(e => e.NoEmpleado).HasPrecision(4).HasColumnName("NO_EMPLEADO");
+                entity.Property(e => e.NombreCompleto).HasMaxLength(152).IsUnicode(false).HasColumnName("NOMBRE_COMPLETO");
+                entity.Property(e => e.Pass).HasMaxLength(20).IsUnicode(false).HasColumnName("PASS");
+                entity.Property(e => e.Usuario).HasPrecision(2).HasColumnName("USUARIO");
+                entity.Property(e => e.Viaticos).HasPrecision(1).HasColumnName("VIATICOS");
+                entity.Property(e => e.ViaticosNivel).HasPrecision(1).HasColumnName("VIATICOS_NIVEL");
+                entity.Property(e => e.Municipio).HasPrecision(1).HasColumnName("MUNICIPIO");
+                entity.Property(e => e.Oficina).HasPrecision(1).HasColumnName("OFICINA");
 
             });
 
@@ -297,6 +184,28 @@ namespace apicea.Data
                 entity.Property(e => e.Estatus).HasColumnType("VARCHAR2").HasColumnName("ESTATUS");
 
                 entity.ToFunction("F_LISTAVIATICOSXEMP");
+
+            });
+
+            modelBuilder.Entity<VistaEmpleados>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("VS_EMPLEADOS");
+
+                entity.Property(e => e.Activo).HasMaxLength(2).IsUnicode(false).HasColumnName("ACTIVO");
+                entity.Property(e => e.Empleado).HasPrecision(4).HasColumnName("EMPLEADO");
+                entity.Property(e => e.Paterno).HasMaxLength(50).IsUnicode(false).HasColumnName("PATERNO");
+                entity.Property(e => e.Materno).HasMaxLength(50).IsUnicode(false).HasColumnName("MATERNO");
+                entity.Property(e => e.Nombre).HasMaxLength(50).IsUnicode(false).HasColumnName("NOMBRE");
+                entity.Property(e => e.IdPue).HasPrecision(3).HasColumnName("ID_PUE");
+                entity.Property(e => e.DescripcionPuesto).HasColumnName("DESCRIPCION_PUESTO");
+                entity.Property(e => e.Deptoue).HasPrecision(4).HasColumnName("DEPTOUE").HasDefaultValueSql("0     ");
+                entity.Property(e => e.DescripcionDepto).HasColumnName("DESCRIPCION_DEPTO");
+                entity.Property(e => e.Deptocomi).HasPrecision(4).HasColumnName("DEPTOCOMI").HasDefaultValueSql("0     ");
+                entity.Property(e => e.NombreCompleto).HasColumnName("NOMBRE_COMPLETO");
+                entity.Property(e => e.Municipio).HasColumnName("MUNICIPIO").HasPrecision(1);
+                entity.Property(e => e.Oficina).HasColumnName("OFICINA").HasPrecision(1);
+                entity.Property(e => e.Nivel).HasColumnName("NIVEL").HasPrecision(2);
 
             });
 
