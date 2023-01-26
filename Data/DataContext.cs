@@ -21,6 +21,8 @@ namespace apicea.Data
         public DbSet<ViaticosPart> ViaticosPartidas { get; set; }
         public DbSet<ListaViaticosPorEmpleado> listaViaticosPorEmpleados { get;set; }
         public DbSet<VistaEmpleados> VistaEmpleados { get; set; }
+        public DbSet<VsFormatoComision> VistaFormatoComision { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -209,6 +211,38 @@ namespace apicea.Data
 
             });
 
+            modelBuilder.Entity<VsFormatoComision>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("VS_FORMATOCOMISION_VIATICOS");
+
+                entity.Property(e => e.Oficina).HasColumnName("OFICINA");
+                entity.Property(e => e.Ejercicio).HasColumnName("EJERCICIO");
+                entity.Property(e => e.NoViat).HasColumnName("NOVIAT");
+                entity.Property(e => e.Fecha).HasColumnName("FECHA").HasColumnType("DATE");
+                entity.Property(e => e.NoEmp).HasColumnName("NOEMP");
+                entity.Property(e => e.OrigenId).HasColumnName("ORIGENID");
+                entity.Property(e => e.DestinoId).HasColumnName("DESTINOID");
+                entity.Property(e => e.Motivo).HasColumnName("MOTIVO");
+                entity.Property(e => e.FechaSal).HasColumnName("FECHASAL").HasColumnType("DATE");
+                entity.Property(e => e.FechaReg).HasColumnName("FECHAREG").HasColumnType("DATE");
+                entity.Property(e => e.Dias).HasColumnName("DIAS");
+                entity.Property(e => e.InforAct).HasColumnName("INFOR_ACT");
+                entity.Property(e => e.Importe).HasColumnName("IMPORTE").HasColumnType("FLOAT").HasPrecision(126);
+                entity.Property(e => e.Nombre).HasColumnName("NOMBRE");
+                entity.Property(e => e.Materno).HasColumnName("MATERNO");
+                entity.Property(e => e.Paterno).HasColumnName("PATERNO");
+                entity.Property(e => e.DescripcionPuesto).HasColumnName("DESCRIPCIONPUESTO");
+                entity.Property(e => e.CdOrigen).HasColumnName("CDORIGEN");
+                entity.Property(e => e.CdDestino).HasColumnName("CDDESTINO");
+                entity.Property(e => e.QuienLoComisiona).HasColumnName("QUIENLOCOMISIONA");
+                entity.Property(e => e.PuestoQuienLoComisiona).HasColumnName("PUESTOQUIENLOCOMISIONA");
+                entity.Property(e => e.EdoOrigen).HasColumnName("EDOORIGEN");
+                entity.Property(e => e.EdoDestino).HasColumnName("EDODESTINO");
+                entity.Property(e => e.DeptoDescripcion).HasColumnName("DEPTODESCRIPCION");
+
+
+            });
         }
 
     }

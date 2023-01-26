@@ -94,6 +94,15 @@ namespace apicea.Controllers
             var result = await dbContext.listaViaticosPorEmpleados.FromSqlInterpolated($"select * from table (F_LISTAVIATICOSXEMP({ejercicio},{empleado}))").ToListAsync();
             return Ok(result);
         }
+
+        [HttpGet("formato-comision/{oficina:int}/{ejercicio:int}/{noviat:int}")]
+        public async Task<ActionResult<IEnumerable<VsFormatoComision>>> GetFormatoComision(int oficina, int ejercicio, int noviat)
+        {
+            var result = await dbContext.VistaFormatoComision.Where( v => v.Oficina == oficina
+                        && v.Ejercicio == ejercicio
+                        && v.NoViat == noviat).ToListAsync();
+            return Ok(result);
+        }
         
     }
 }
