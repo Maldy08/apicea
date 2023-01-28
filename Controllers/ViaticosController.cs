@@ -96,11 +96,11 @@ namespace apicea.Controllers
         }
 
         [HttpGet("formato-comision/{oficina:int}/{ejercicio:int}/{noviat:int}")]
-        public async Task<ActionResult<IEnumerable<VsFormatoComision>>> GetFormatoComision(int oficina, int ejercicio, int noviat)
+        public async Task<ActionResult<VsFormatoComision>> GetFormatoComision(int oficina, int ejercicio, int noviat)
         {
             var result = await dbContext.VistaFormatoComision.Where( v => v.Oficina == oficina
                         && v.Ejercicio == ejercicio
-                        && v.NoViat == noviat).ToListAsync();
+                        && v.NoViat == noviat).FirstOrDefaultAsync();
             return Ok(result);
         }
         

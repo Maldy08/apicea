@@ -201,9 +201,9 @@ namespace apicea.Data
                 entity.Property(e => e.Nombre).HasMaxLength(50).IsUnicode(false).HasColumnName("NOMBRE");
                 entity.Property(e => e.IdPue).HasPrecision(3).HasColumnName("ID_PUE");
                 entity.Property(e => e.DescripcionPuesto).HasColumnName("DESCRIPCION_PUESTO");
-                entity.Property(e => e.Deptoue).HasPrecision(4).HasColumnName("DEPTOUE").HasDefaultValueSql("0     ");
+                entity.Property(e => e.Deptoue).HasPrecision(4).HasColumnName("DEPTOUE").HasDefaultValueSql("0");
                 entity.Property(e => e.DescripcionDepto).HasColumnName("DESCRIPCION_DEPTO");
-                entity.Property(e => e.Deptocomi).HasPrecision(4).HasColumnName("DEPTOCOMI").HasDefaultValueSql("0     ");
+                entity.Property(e => e.Deptocomi).HasPrecision(4).HasColumnName("DEPTOCOMI").HasDefaultValueSql("0");
                 entity.Property(e => e.NombreCompleto).HasColumnName("NOMBRE_COMPLETO");
                 entity.Property(e => e.Municipio).HasColumnName("MUNICIPIO").HasPrecision(1);
                 entity.Property(e => e.Oficina).HasColumnName("OFICINA").HasPrecision(1);

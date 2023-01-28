@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Web;
+using WkHtmlToPdfDotNet;
+using WkHtmlToPdfDotNet.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(
         opt => opt.UseOracle(builder.Configuration.GetConnectionString("OracleConnection"),
             b => b.UseOracleSQLCompatibility("11")));
+
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 builder.Services.AddCors(op =>
 {
@@ -46,6 +51,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,14 +63,14 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-//app.UseAuthorization();
+
 app.UseCors();
 app.MapControllers();
-
 app.UseRouting();
 
 //Authentication Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseStaticFiles();
 app.Run();
