@@ -26,10 +26,10 @@ namespace apicea.Controllers
         }
 
         [HttpGet("{ejercicio}/{oficina}/{noviat}")]
-        public async Task<ActionResult<IEnumerable<Viaticos>>> GetAllByEjercicioOficinaNoviat(int ejercicio, int oficina, int noviat)
+        public async Task<ActionResult<Viaticos>> GetAllByEjercicioOficinaNoviat(int ejercicio, int oficina, int noviat)
         {
-            var result = await dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina
-                && v.NoViat == noviat).ToListAsync();
+            var result = await dbContext.Viaticos.FirstOrDefaultAsync(v => v.Ejercicio == ejercicio && v.Oficina == oficina
+                && v.NoViat == noviat);
             return Ok(result);
         }
 

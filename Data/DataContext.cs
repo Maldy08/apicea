@@ -184,6 +184,8 @@ namespace apicea.Data
                 entity.Property(e => e.Salida).HasColumnType("DATE").HasColumnName("SALIDA");
                 entity.Property(e => e.Regreso).HasColumnType("DATE").HasColumnName("REGRESO");
                 entity.Property(e => e.Estatus).HasColumnType("VARCHAR2").HasColumnName("ESTATUS");
+                entity.Property(e => e.Oficina).HasPrecision(1).HasColumnName("OFICINA");
+                entity.Property(e => e.Ejercicio).HasPrecision(4).HasColumnName("EJERCICIO");
 
                 entity.ToFunction("F_LISTAVIATICOSXEMP");
 
@@ -229,6 +231,7 @@ namespace apicea.Data
                 entity.Property(e => e.Dias).HasColumnName("DIAS");
                 entity.Property(e => e.InforAct).HasColumnName("INFOR_ACT");
                 entity.Property(e => e.Importe).HasColumnName("IMPORTE").HasColumnType("FLOAT").HasPrecision(126);
+                entity.Property(e => e.InforResul).HasColumnName("INFOR_RESUL");
                 entity.Property(e => e.Nombre).HasColumnName("NOMBRE");
                 entity.Property(e => e.Materno).HasColumnName("MATERNO");
                 entity.Property(e => e.Paterno).HasColumnName("PATERNO");

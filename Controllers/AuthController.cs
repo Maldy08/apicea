@@ -15,19 +15,19 @@ namespace apicea.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly DataContext dbContext;
+        private readonly DataContext _dbContext;
         private readonly IConfiguration _configuration;
 
         public AuthController(DataContext dbContext, IConfiguration configuration)
         {
-            this.dbContext = dbContext;
+            this._dbContext = dbContext;
             _configuration = configuration;
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<Usuarios>> Login(string user, string password)
         {
-            var usuario = await dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.ToLower().Equals(user)
+            var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.ToLower().Equals(user)
                 && u.Pass.ToLower().Equals(password));
 
             if (usuario != null)
@@ -40,14 +40,14 @@ namespace apicea.Controllers
         [HttpGet("usuarios")]
         public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
-            var result = await dbContext.Usuarios.ToListAsync();
+            var result = await _dbContext.Usuarios.ToListAsync();
             return Ok(result);
         }
 
         [HttpGet("usuarioById/{id:int}")]
         public async Task<ActionResult<Usuarios>> GetUsuarioById(int id)
         {
-            var result = await dbContext.Usuarios.FirstOrDefaultAsync(u => u.Usuario == id);
+            var result = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Usuario == id);
             if( result!= null) return Ok( new AuthResponse {Ok = true, Id = result.Usuario, User = result.Login });
 
             return BadRequest(new AuthResponse { Ok = false, Id = 0 });
@@ -57,7 +57,7 @@ namespace apicea.Controllers
         public async Task<ActionResult> ValidateToken(string token)
         {
             var handler = DecodeToken(token);
-            if( handler != null)
+            if (handler!.Claims.Any())
             {
                 var user = handler.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
                 var id = int.Parse( handler.Claims.First(c => c.Type == "userid").Value);
@@ -73,7 +73,7 @@ namespace apicea.Controllers
 
         private async Task<UserData?> GetUserData(string user)
         {
-            var result = await dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.Equals(user));
+            var result = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.Equals(user));
             if (result != null)
             {
                 return new UserData
