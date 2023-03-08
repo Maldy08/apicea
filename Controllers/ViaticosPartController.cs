@@ -43,8 +43,9 @@ namespace apicea.Controllers
             _dataContext.ViaticosPartidas.Add(viaticosPart);
             try
             {
+                //await Task.Delay(1000);
                 await _dataContext.SaveChangesAsync();
-                return Ok("registro guardado exitosamente!");
+                return Ok(viaticosPart);
 
             }
             catch (Exception e)

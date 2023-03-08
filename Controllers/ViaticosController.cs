@@ -54,13 +54,51 @@ namespace apicea.Controllers
             try
             {
                 await dbContext.SaveChangesAsync();
-                return Ok("registro guardado exitosamente!");
+                //await Task.Delay
+                  //  (1000);
+                return Ok(viaticos);
 
             }
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Viaticos>> Update(Viaticos viaticos)
+        {
+            var viaticoUpdate = await dbContext.Viaticos.FindAsync(viaticos.Oficina, viaticos.Ejercicio, viaticos.NoViat);
+            if(viaticoUpdate != null)
+            {
+                viaticoUpdate.Motivo = viaticos.Motivo;
+                viaticoUpdate.OrigenId = viaticos.OrigenId;
+                viaticoUpdate.DestinoId = viaticos.DestinoId;
+                viaticoUpdate.Dias = viaticos.Dias;
+                viaticoUpdate.Fecha= viaticos.Fecha;
+                viaticoUpdate.FechaSal = viaticos.FechaSal;
+                viaticoUpdate.FechaReg = viaticos.FechaReg;
+                viaticoUpdate.InforAct = viaticos.InforAct;
+                viaticoUpdate.InforResul = viaticos.InforResul;
+                viaticoUpdate.InforFecha = viaticos.InforFecha;
+
+                try
+                {
+                    await dbContext.SaveChangesAsync();
+                    return Ok(viaticoUpdate);
+                }
+                catch (Exception e)
+                {
+
+                    return BadRequest(e.ToString());
+                }
+
+            }
+            else
+            {
+                return BadRequest("Error al actualizar el registro");
+            }
+
         }
 
         [HttpDelete]
