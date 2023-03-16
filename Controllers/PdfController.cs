@@ -1,8 +1,18 @@
 ﻿using apicea.Utility;
+using apicea.Controllers;
+using Entidades.Viaticos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WkHtmlToPdfDotNet;
-using WkHtmlToPdfDotNet.Contracts;
+using Gehtsoft.PDFFlow.Builder;
+using Gehtsoft.PDFFlow.Models.Enumerations;
+using Gehtsoft.PDFFlow.Models.Shared;
+using Gehtsoft.PDFFlow.UserUtils;
+using Gehtsoft.PDFFlow.Utils;
+using System.Reflection.Metadata;
+using System.Drawing.Printing;
+using apicea.Data;
+using Entidades.RecursosHumanos;
+using Microsoft.EntityFrameworkCore;
 
 namespace apicea.Controllers
 {
@@ -10,44 +20,355 @@ namespace apicea.Controllers
     [ApiController]
     public class PdfController : ControllerBase
     {
-        private IConverter _converter;
-        private IWebHostEnvironment _environment;
+        private readonly DataContext dbContext;
 
-        public PdfController(IConverter converter, IWebHostEnvironment environment)
+        public PdfController(DataContext dbContext)
         {
-            _converter = converter;
-            _environment = environment;
+            this.dbContext = dbContext;
         }
-        
+
         [HttpGet]
-        public IActionResult CreatePDF()
+        public FileStream ReciboViaticoPDF()
         {
-            var globalSettings = new GlobalSettings
-            {
-                ColorMode = ColorMode.Color,
-                Orientation = Orientation.Portrait,
-                PaperSize = PaperKind.A4,
-                Margins = new MarginSettings { Top = 10 },
-                DocumentTitle = "PDF Report",
-            
-            };
-            var objectSettings = new ObjectSettings
-            {
-                PagesCount = true,
-                HtmlContent = TemplateGenerator.GetHtmlString2(_environment),
-               // WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(_environment.WebRootPath, "assets", "bootstrap.min.css") },
-                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-            };
-            var pdf = new HtmlToPdfDocument()
-            {
-                GlobalSettings = globalSettings,
-                Objects = { objectSettings }
-            };
-            var file =  _converter.Convert(pdf);
-            
-            return File(file, "application/pdf", "Viaticos.pdf");
-        }
+            //Viaticos viaticousario = new Viaticos();
+            //viaticousario = Controllers.ViaticosController.
+            //var result = await dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina && v == noviat).ToListAsync();
+            var myStream = new FileStream("Result.pdf", FileMode.Create);
+            //Create a document builder:
+            var imageDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets");
+            var logoceaybc = Path.Combine(imageDir, "logobcycea.jpg");
+            DocumentBuilder.New()
 
+                //Encabezado
+                .AddSection().
+                SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
+                .SetOrientation(PageOrientation.Portrait)
+            .AddTable()
+                .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
+                .AddColumnToTable("", XUnit.FromPercent(40))
+                .AddColumnToTable("", XUnit.FromPercent(60))
+                //.AddColumnToTable("", XUnit.FromPercent(70))
+                    .AddRow()
+                        .AddCell()
+                        .SetHorizontalAlignment(HorizontalAlignment.Left)
+                        .SetVerticalAlignment(VerticalAlignment.Center)
+                        .AddImageToCell(logoceaybc, 288, 70, ScalingMode.UserDefined)
+                    .ToRow()
+                        .AddCell()
+                        .SetHorizontalAlignment(HorizontalAlignment.Center)
+                        .SetVerticalAlignment(VerticalAlignment.Center)
+                        .SetFontSize(12)
+                            .AddParagraph("COMISION ESTATAL DEL AGUA DE BAJA CALIFORNIA")
+                            .SetBold()
+                        .ToCell()
+                        .AddParagraphToCell("OFICINA CEA MEXICALI")
+                        .AddParagraphToCell("RECIBO DE VIATICOS")
+                    
+                .ToSection()
+
+                //Tabla 1
+                .AddTable()
+                .SetMarginTop(20)
+                .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.Solid))
+                .AddColumnToTable("", XUnit.FromPercent(50))
+                .AddColumnToTable("", XUnit.FromPercent(50))
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Left)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(4)
+                            .SetFontSize(9)
+                            .AddParagraph("BUENO POR: ")
+                            .AddText("#####")
+                                .SetBold()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Left)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(4)
+                            .SetFontSize(9)
+                            .AddParagraph("NO. DE OFICIO: ").SetMarginBottom(10)
+                            .AddText("#####")
+                                .SetBold()
+                            .ToCell()
+                            .AddParagraphToCell("FECHA: #####")
+                .ToSection()
+
+                //Tabla 2
+                .AddTable()
+                .SetMarginTop(20)
+                .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.Solid))
+                .AddColumnToTable("", XUnit.FromPercent(30))
+                .AddColumnToTable("", XUnit.FromPercent(70))
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Left)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(10)
+                            .SetFontSize(9)
+                            .AddParagraph("NOMBRE: ").SetMarginBottom(10)
+                            .ToCell()
+                            .AddParagraphToCell("DEPARTAMENTO:").AddParagraph("").SetMarginBottom(10)
+                            .ToCell()
+                            .AddParagraphToCell("PUESTO:")
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Left)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(10)
+                            .SetFontSize(9)
+                            .SetBold()
+                            .AddParagraph("##### (#####) ").SetMarginBottom(10)
+                            .ToCell()
+                            .AddParagraphToCell("#####").AddParagraph("").SetMarginBottom(10)
+                            .ToCell()
+                            .AddParagraphToCell("#####")
+                .ToSection()
+
+                //Tabla 3
+                .AddTable()
+                .SetMarginTop(20)
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(100))
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(10)
+                            .SetFontSize(9)
+                            .AddParagraph("DATOS DE COMISIÓN")
+                            .ToCell()
+                .ToSection()
+                .AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
+                .AddTable()
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(20))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            
+                            .AddParagraph("ORIGEN")
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("DESTINO")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("FECHA INICIO")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("FECHA TERMINO")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("DIAS")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("IMPORTE")
+                            .ToCell()
+                .ToSection()
+                .AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
+                .AddTable()
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 6))
+                .AddColumnToTable("", XUnit.FromPercent(20))
+
+                    .AddRow()
+                    .SetBold()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("#####")
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("#####")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("#####")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("#####")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("#####")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("#####")
+                            .ToCell()
+                .ToSection()
+                .AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
+                .AddTable()
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(40))
+                .AddColumnToTable("", XUnit.FromPercent(60))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("MOTIVO")
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .SetFontSize(8)
+                            .AddParagraph("ACTIVIDADES")
+                            .ToCell()
+                            .ToRow()
+                   .ToSection()
+                .AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
+                .AddTable()
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(40))
+                .AddColumnToTable("", XUnit.FromPercent(60))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Left)
+                            .SetVerticalAlignment(VerticalAlignment.Top)
+                            .SetPadding(16)
+                            .SetFontSize(8)
+                            .AddParagraph("###########################")
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Left)
+                            .SetVerticalAlignment(VerticalAlignment.Top)
+                            .SetPadding(16)
+                            .SetFontSize(9)
+                            .AddParagraph("Soy ChatGPT, un modelo de lenguaje creado por OpenAI para responder preguntas y. Con capacidad de procesamiento de lenguaje natural y mi amplia base de conocimientos, estoy aquí para ayudarte con cualquier cosa que necesites. Ya sea que estés buscando información, consejos o simplemente quieras tener una conversación, estoy listo para ofrecerte mi ayuda. No dudes en hacerme cualquier pregunta o decirme lo que necesitas, estoy aquí para ayudarte en todo lo que pueda en un texto de 500 caracteres.")
+                            .ToCell()
+                            .ToRow()
+                   .ToSection()
+
+                   //Tabla 4 
+                .AddTable().SetMarginTop(20).AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
+                //.AddTable()
+                //.SetBorderStroke(Stroke.None)
+                //.AddColumnToTable("", XUnit.FromPercent(50))
+                //.AddColumnToTable("", XUnit.FromPercent(50))
+
+                //    .AddRow()
+                //        .AddCell()
+                //            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                //            .SetVerticalAlignment(VerticalAlignment.Center)
+                //            .SetPadding(4)
+                //            .SetFontSize(8)
+                //            .AddParagraph("AUTORIZO")
+                //            .ToRow()
+                //        .AddCell()
+                //            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                //            .SetVerticalAlignment(VerticalAlignment.Center)
+                //            .SetPadding(8)
+                //            .SetFontSize(8)
+                //            .AddParagraph("RECIBÍ")
+                //            .ToCell()
+                //            .ToRow()
+                //   .ToSection()
+                //.AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
+                .AddTable()
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(50))
+                .AddColumnToTable("", XUnit.FromPercent(50))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("AUTORIZO").SetMarginBottom(50)
+                            .ToCell()
+                            .AddParagraph("___________________________________________").SetBold()
+                            .ToCell().SetPadding(4)
+                            .AddParagraphToCell("").AddParagraph("#####").SetBold()
+                            .ToCell()
+                            .AddParagraphToCell("#####")
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .SetFontSize(8)
+                            .AddParagraph("RECIBÍ").SetMarginBottom(50)
+                            .ToCell()
+                            .AddParagraph("___________________________________________").SetBold()
+                            .ToCell().SetPadding(4)
+                            .AddParagraphToCell("").AddParagraph("#").SetBold()
+                            .ToCell()
+                            .AddParagraphToCell("JORGE")
+                            .ToRow()
+
+                   .ToSection()
+            //Build a file:
+            .ToDocument().Build(myStream);
+            myStream.Close();
+
+            return myStream;
+        }
     }
 }
+
