@@ -30,14 +30,25 @@ namespace apicea.Controllers
         {
             var result = await dbContext.Viaticos.FirstOrDefaultAsync(v => v.Ejercicio == ejercicio && v.Oficina == oficina
                 && v.NoViat == noviat);
+
             return Ok(result);
         }
 
         [HttpGet("get-consecutivo/{ejercicio:int}/{oficina:int}")]
         public  ActionResult<IEnumerable<Viaticos>> GetNoViat(int ejercicio, int oficina)
         {
-            var result = dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina).Select(v => v.NoViat).Max();
-            return Ok(result);
+
+            var exists = dbContext.Viaticos.AnyAsync(v => v.Ejercicio == ejercicio && v.Oficina == oficina).Result;
+            if(exists)
+            {
+
+                var result = dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina).Select(v => v.NoViat).Max();
+                return Ok(result);
+            }
+            else
+            {
+                return Ok(0);
+            }
         }
 
         [HttpGet("{ejercicio}/{empleado}")]
