@@ -28,11 +28,13 @@ namespace apicea.Controllers
         }
 
         [HttpGet]
-        public FileStream ReciboViaticoPDF()
+        public async Task<FileStream> ReciboViaticoPDF(int ejercicio, int oficina, int noviat)
         {
             //Viaticos viaticousario = new Viaticos();
             //viaticousario = Controllers.ViaticosController.
-            //var result = await dbContext.Viaticos.Where(v => v.Ejercicio == ejercicio && v.Oficina == oficina && v == noviat).ToListAsync();
+            var result = await dbContext.VistaFormatoComision.Where(v => v.Oficina == oficina
+             && v.Ejercicio == ejercicio
+             && v.NoViat == noviat).FirstOrDefaultAsync();
             var myStream = new FileStream("Result.pdf", FileMode.Create);
             //Create a document builder:
             var imageDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets");
@@ -79,7 +81,7 @@ namespace apicea.Controllers
                             .SetPadding(4)
                             .SetFontSize(9)
                             .AddParagraph("BUENO POR: ")
-                            .AddText("#####")
+                            .AddText(result?.Importe.ToString())
                                 .SetBold()
                             .ToRow()
                         .AddCell()
@@ -88,7 +90,7 @@ namespace apicea.Controllers
                             .SetPadding(4)
                             .SetFontSize(9)
                             .AddParagraph("NO. DE OFICIO: ").SetMarginBottom(10)
-                            .AddText("#####")
+                            .AddText("")
                                 .SetBold()
                             .ToCell()
                             .AddParagraphToCell("FECHA: #####")
