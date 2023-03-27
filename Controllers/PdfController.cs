@@ -879,15 +879,16 @@ namespace apicea.Controllers
         }
 
         [HttpGet("Tres Formatos")]
-        public async Task<FileStream> TresFormatoPDF(int ejercicio, int oficina, int noviat)
+        public async Task<ActionResult> TresFormatoPDF(int ejercicio, int oficina, int noviat)
         {
 
 
             var result = await dbContext.VistaFormatoComision.Where(v => v.Oficina == oficina && v.Ejercicio == ejercicio
             && v.NoViat == noviat).FirstOrDefaultAsync();
-            var myStream = new FileStream("Formatos.pdf", FileMode.Create);
+            var myStream = new FileStream("wwwroot/files/Formatos.pdf", FileMode.Create);
             //Create a document builder:
             var imageDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets");
+            var pdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files","Formatos.pdf");
             var logoceaybc = Path.Combine(imageDir, "logobcycea.jpg");
             DocumentBuilder.New()
 
@@ -953,89 +954,7 @@ namespace apicea.Controllers
 
 
                 //Tabla 2
-                .AddTable()
-                .SetMarginTop(10)
-                .SetBorderStroke(Stroke.None)
-                .AddColumnToTable("", XUnit.FromPercent(100))
-
-                    .AddRow()
-                    .SetBold()
-                        .AddCell()
-                            .SetHorizontalAlignment(HorizontalAlignment.Left)
-                            .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.Nombre + " " + result?.Paterno + " " + result?.Materno)
-                            .ToCell()
-                            .AddParagraph(result?.DeptoDescripcion)
-                            .ToCell()
-                            .AddParagraphToCell(result?.DescripcionPuesto).AddParagraph()
-                            .ToCell()
-                            .AddParagraphToCell("P R E S E N T E .-")
-                            .ToRow()
-                   .ToSection()
-                 .AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE "+ result?.CdDestino + ", " + result?.EdoDestino + 
-                 " EL DIA "+ result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy") +", "+ 
-                  result?.Dias.ToString() +" DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")
-                 .SetMarginTop(25)
-                 .ToSection()
-                    //Motivo
-                    .AddParagraph(result?.Motivo)
-                    .SetMarginTop(15)
-                    .SetBold()
-                 .ToSection()
-                 .AddParagraph("REALIZADO LAS SIGUIENTES ACTIVIDADES")
-                 .SetMarginTop(35)
-                 .ToSection()
-                    //Motivo
-                    .AddParagraph(result?.InforAct)
-                    .SetMarginTop(15)
-                    .SetBold()
-                 .ToSection()
-
-                //Tabla 4 
-                .AddTable()
-                .SetBorderStroke(Stroke.None)
-                .AddColumnToTable("", XUnit.FromPercent(100))
-
-                    .AddRow()
-                        .AddCell()
-                            .SetHorizontalAlignment(HorizontalAlignment.Center)
-                            .SetVerticalAlignment(VerticalAlignment.Center)
-                            .SetPadding(8)
-                            .AddParagraph("___________________________________________________________________").SetBold()
-                            .SetMarginTop(150)
-                            .ToCell().SetPadding(4)
-                            .AddParagraphToCell("").AddParagraph(result?.QuienLoComisiona).SetBold()
-                            .ToCell()
-                            .AddParagraphToCell(result?.PuestoQuienLoComisiona)
-                            .ToRow()
-                   .ToSection()
-                   .ToDocument()
-
-                    .AddSection().
-                SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
-                .SetOrientation(PageOrientation.Portrait)
-            .AddTable()
-                .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
-                .AddColumnToTable("", XUnit.FromPercent(40))
-                .AddColumnToTable("", XUnit.FromPercent(60))
-                    //.AddColumnToTable("", XUnit.FromPercent(70))
-                    .AddRow()
-                        .AddCell()
-                        .SetHorizontalAlignment(HorizontalAlignment.Left)
-                        .SetVerticalAlignment(VerticalAlignment.Center)
-                        .AddImageToCell(logoceaybc, 288, 70, ScalingMode.UserDefined)
-                    .ToRow()
-                        .AddCell()
-                        .SetHorizontalAlignment(HorizontalAlignment.Center)
-                        .SetVerticalAlignment(VerticalAlignment.Center)
-                        .SetFontSize(12)
-                            .AddParagraph("COMISION ESTATAL DEL AGUA DE BAJA CALIFORNIA")
-                            .SetBold()
-                        .ToCell()
-                        .AddParagraphToCell("OFICINA CEA " + result?.CdOrigen)
-                        .AddParagraphToCell("RECIBO DE VIATICOS")
-
-                .ToSection()
+               
 
                 //Tabla 1
                 .AddTable()
@@ -1610,7 +1529,20 @@ namespace apicea.Controllers
             .ToDocument().Build(myStream);
             myStream.Close();
 
-            return myStream;
+
+            if (System.IO.File.Exists(pdfPath))
+            {
+                byte[] abc = System.IO.File.ReadAllBytes(pdfPath);
+                System.IO.File.WriteAllBytes(pdfPath, abc);
+                MemoryStream ms = new MemoryStream(abc);
+                return new FileStreamResult(ms, "application/pdf");
+            }
+            else
+            {
+                return NotFound(pdfPath);
+            }
+
+           // return myStream;
         }
 
     }

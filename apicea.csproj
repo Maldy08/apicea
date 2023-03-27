@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Entidades\Entidades.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\files\" />
+  </ItemGroup>
+
 </Project>
