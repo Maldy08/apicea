@@ -31,7 +31,7 @@ namespace apicea.Controllers
         [HttpGet("Formato Comisión")]
         public async Task<FileStream> FormatoComisionPDF(int ejercicio, int oficina, int noviat)
         {
-
+            
             var result = await dbContext.VistaFormatoComision.Where(v => v.Oficina == oficina
              && v.Ejercicio == ejercicio
              && v.NoViat == noviat).FirstOrDefaultAsync();
@@ -857,14 +857,14 @@ namespace apicea.Controllers
             return myStream;
         }
 
-        [HttpGet("Tres Formatos")]
+        [HttpGet("TresFormatos")]
         public async Task<ActionResult> TresFormatoPDF(int ejercicio, int oficina, int noviat)
         {
 
 
             var result = await dbContext.VistaFormatoComision.Where(v => v.Oficina == oficina && v.Ejercicio == ejercicio
             && v.NoViat == noviat).FirstOrDefaultAsync();
-            var myStream = new FileStream("wwwroot/files/Formato" + result?.Oficina + result?.Ejercicio + result?.NoViat + ".pdf", FileMode.Create);
+            var myStream = new FileStream("wwwroot/files/Formatoaaaaaaaa" + result?.Oficina + result?.Ejercicio + result?.NoViat + ".pdf", FileMode.Create);
             //Create a document builder:
             var imageDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets");
             var pdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files","Formatos.pdf");
@@ -1256,8 +1256,8 @@ namespace apicea.Controllers
                             .ToRow()
 
                    .ToSection()
-                   .ToDocument()
-
+                   .ToDocument().Build(myStream);
+                   DocumentBuilder.New()
                    .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
@@ -1556,6 +1556,163 @@ namespace apicea.Controllers
             }
 
            // return myStream;
+        }
+
+        internal async void FormatoComision(int ejercicio, int oficina, int noviat, SectionBuilder sectionBuilder)
+        {
+            var result = await dbContext.VistaFormatoComision.Where(v => v.Oficina == oficina
+             && v.Ejercicio == ejercicio
+             && v.NoViat == noviat).FirstOrDefaultAsync();
+            var myStream = new FileStream("Formato-Comision.pdf", FileMode.Create);
+            //Create a document builder:
+            var imageDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets");
+            var logoceaybc = Path.Combine(imageDir, "logobcycea.jpg");
+            DocumentBuilder.New()
+
+                //Encabezado
+                .AddSection().
+                SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
+                .SetOrientation(PageOrientation.Portrait)
+            .AddTable()
+                .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
+                .AddColumnToTable("", XUnit.FromPercent(40))
+                .AddColumnToTable("", XUnit.FromPercent(60))
+                    //.AddColumnToTable("", XUnit.FromPercent(70))
+                    .AddRow()
+                        .AddCell()
+                        .SetVerticalAlignment(VerticalAlignment.Center)
+                        .AddImageToCell(logoceaybc, 288, 70, ScalingMode.UserDefined)
+                    .ToRow()
+                        .AddCell()
+                        .SetHorizontalAlignment(HorizontalAlignment.Center)
+                        .SetVerticalAlignment(VerticalAlignment.Center)
+                        .SetFontSize(12)
+                            .AddParagraph("COMISION ESTATAL DEL AGUA DE BAJA CALIFORNIA")
+                            .SetBold()
+                        .ToCell()
+                        .AddParagraphToCell("OFICINA CEA MEXICALI")
+                        .AddParagraphToCell("FORMATO DE COMISIÓN")
+
+                .ToSection()
+                //Tabla 1
+                .AddTable()
+                .SetMarginTop(20)
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(100 / 4))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 4))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 4))
+                .AddColumnToTable("", XUnit.FromPercent(100 / 4))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .AddParagraph("")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .AddParagraph("")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+                            .AddParagraph("")
+                            .ToCell()
+                            .ToRow()
+                        .AddCell()
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(2)
+
+                            //.AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                            .AddParagraph("18  DE ENERO DE 2020")
+                            .ToCell()
+                            .AddParagraph("NO. DE OFICIO: ").SetMarginBottom(10)
+                            //.AddText("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Ejercicio.ToString())
+                            .AddText("V2-20/2023")
+                                .SetBold()
+                            .ToCell()
+                .ToSection()
+
+
+                //Tabla 2
+                .AddTable()
+                .SetMarginTop(10)
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(100))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(0)
+                            .SetBold()
+                            //.AddParagraph(result?.Nombre + " " + result?.Paterno + " " + result?.Materno)
+                            .AddParagraph("J. GUADALUPE SALAZAR GUTIRREZ")
+                            .SetBold()
+                            .ToCell()
+                            //.AddParagraph(result?.DeptoDescripcion)
+                            .AddParagraph("DIRECCION DE OPERACION Y MANTENIMIENTO")
+                            .SetBold()
+                            .ToCell()
+                            //.AddParagraphToCell(result?.DescripcionPuesto).AddParagraph()
+                            .AddParagraphToCell("DIRECTOR DE OPERACION Y MANTENIMIENTO").AddParagraph()
+                            .SetBold()
+                            .ToCell()
+                            .AddParagraphToCell("P R E S E N T E .-")
+                            .SetBold()
+                            .ToRow()
+                   .ToSection()
+
+                 /*.AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE "+ result?.CdDestino + ", " + result?.EdoDestino + 
+                 " EL DIA "+ result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy") +", "+ 
+                  result?.Dias.ToString() +" DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")*/
+                 .AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE TECATE, BAJA CALIFORNIA " +
+                 "EL DIA 10 DE ENERO " +
+                  "DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")
+                 .SetMarginTop(25)
+                 .ToSection()
+                    //Motivo
+                    .AddParagraph("TRASLADARSE A PRESA 'LAS AURAS'")
+                    .SetMarginTop(15)
+                    .SetBold()
+                 .ToSection()
+
+
+                 .AddParagraph("REALIZADO LAS SIGUIENTES ACTIVIDADES")
+                 .SetMarginTop(35)
+                 .ToSection()
+                    //Motivo
+                    .AddParagraph("LLEVAR A CABO RECORRIDO DE SUPERVISION DE LA OPERACION E INSTALACIONES DE LA PRESA 'LAS AURAS'.")
+                    .SetMarginTop(15)
+                    .SetBold()
+                 .ToSection()
+
+                //Tabla 4 
+                .AddTable()
+                .SetBorderStroke(Stroke.None)
+                .AddColumnToTable("", XUnit.FromPercent(100))
+
+                    .AddRow()
+                        .AddCell()
+                            .SetHorizontalAlignment(HorizontalAlignment.Center)
+                            .SetVerticalAlignment(VerticalAlignment.Center)
+                            .SetPadding(8)
+                            .AddParagraph("___________________________________________________________________").SetBold()
+                            .SetMarginTop(150)
+                            .ToCell().SetPadding(4)
+                            .AddParagraphToCell("").AddParagraph("FRANCISCO JAVIER LOPEZ CHAVEZ").SetBold()
+                            .ToCell()
+                            .AddParagraphToCell("SUBDIRECTOR GENERAL DE HIDRAULICA Y TECNOLOGIAS DEL AGUA")
+                            .ToRow()
+                   .ToSection()
+            //Build a file:
+            .ToDocument().Build(myStream);
+            myStream.Close();
         }
 
     }
