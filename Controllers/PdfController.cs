@@ -31,7 +31,7 @@ namespace apicea.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet("Formato Comisión")]
+        [HttpGet("FormatoComision")]
         public async Task<ActionResult> FormatoComisionPDF(int ejercicio, int oficina, int noviat)
         {
             
@@ -175,7 +175,7 @@ namespace apicea.Controllers
                 return NotFound(pdfPath);
             }
         }
-        [HttpGet("Recibo Viaticos")]
+        [HttpGet("ReciboViatico")]
         public async Task<ActionResult> ReciboViaticoPDF(int ejercicio, int oficina, int noviat)
         {
 
@@ -439,9 +439,9 @@ namespace apicea.Controllers
                             .ToCell()
                             .AddParagraph("___________________________________________").SetBold()
                             .ToCell().SetPadding(4)
-                            .AddParagraphToCell("").AddParagraph(result?.QuienLoComisiona).SetBold()
+                            .AddParagraphToCell("").AddParagraph(result?.DirectorAdministrativo).SetBold()
                             .ToCell()
-                            .AddParagraphToCell(result?.PuestoQuienLoComisiona)
+                            .AddParagraphToCell("DIRECTOR ADMINISTRATIVO")
                             .ToRow()
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
@@ -475,7 +475,7 @@ namespace apicea.Controllers
         }
 
 
-        [HttpGet("Informe Actividades")]
+        [HttpGet("InformeActividades")]
         public async Task<ActionResult> InformeActividadPDF(int ejercicio, int oficina, int noviat)
         {
             var result = await dbContext.VistaFormatoComision.Where(v => v.Oficina == oficina
@@ -1170,9 +1170,9 @@ namespace apicea.Controllers
                             .ToCell()
                             .AddParagraph("___________________________________________").SetBold()
                             .ToCell().SetPadding(4)
-                            .AddParagraphToCell("").AddParagraph(result?.QuienLoComisiona).SetBold()
+                            .AddParagraphToCell("").AddParagraph(result?.DirectorAdministrativo).SetBold()
                             .ToCell()
-                            .AddParagraphToCell(result?.PuestoQuienLoComisiona)
+                            .AddParagraphToCell("DIRECTOR ADMINISTRATIVO")
                             .ToRow()
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)

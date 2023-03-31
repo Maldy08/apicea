@@ -243,6 +243,7 @@ namespace apicea.Data
                 entity.Property(e => e.EdoOrigen).HasColumnName("EDOORIGEN");
                 entity.Property(e => e.EdoDestino).HasColumnName("EDODESTINO");
                 entity.Property(e => e.DeptoDescripcion).HasColumnName("DEPTODESCRIPCION");
+                entity.Property(e => e.DirectorAdministrativo).HasColumnName("DIRECTOR_ADMINISTRATIVO");
 
 
             });
