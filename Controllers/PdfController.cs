@@ -31,7 +31,8 @@ namespace apicea.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet("FormatoComision")]
+        [HttpGet("formato-comision/{ejercicio:int}/{oficina:int}/{noviat:int}")]
+    
         public async Task<ActionResult> FormatoComisionPDF(int ejercicio, int oficina, int noviat)
         {
             
@@ -165,10 +166,19 @@ namespace apicea.Controllers
 
             if (System.IO.File.Exists(pdfPath))
             {
-                byte[] abc = System.IO.File.ReadAllBytes(pdfPath);
-                System.IO.File.WriteAllBytes(pdfPath, abc);
-                MemoryStream ms = new MemoryStream(abc);
-                return new FileStreamResult(ms, "application/pdf") { FileDownloadName = "FormatoComision-" + "V" + result?.Oficina + "-" + result?.NoViat.ToString() + "-" + result?.Fecha.ToString("yy") + ".pdf" };
+                try
+                {
+                    byte[] abc = System.IO.File.ReadAllBytes(pdfPath);
+                    System.IO.File.WriteAllBytes(pdfPath, abc);
+                    MemoryStream ms = new MemoryStream(abc);
+                    return new FileStreamResult(ms, "application/pdf");
+                    }
+                catch (Exception e)
+                {
+
+                    throw new Exception(e.Message);
+                }
+
             }
             else
             {
