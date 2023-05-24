@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf;
+using System.Globalization;
 
 namespace apicea.Controllers
 {
@@ -31,7 +32,7 @@ namespace apicea.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet("formato-comision/{ejercicio:int}/{oficina:int}/{noviat:int}")]
+        [HttpGet("FormatoComision")]
     
         public async Task<ActionResult> FormatoComisionPDF(int ejercicio, int oficina, int noviat)
         {
@@ -95,7 +96,7 @@ namespace apicea.Controllers
                            .SetVerticalAlignment(VerticalAlignment.Center)
                            .SetPadding(2)
 
-                           .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                           .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
                            .ToCell()
                            .AddParagraph("NO. DE OFICIO: ").SetMarginBottom(10)
                            .AddText("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy"))
@@ -124,7 +125,7 @@ namespace apicea.Controllers
                            .ToRow()
                   .ToSection()
                 .AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE " + result?.CdDestino + ", " + result?.EdoDestino +
-                " EL DIA " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy") + ", " +
+                " EL DIA " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy") + ", " +
                  result?.Dias.ToString() + " DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")
                 .SetMarginTop(25)
                 .ToSection()
@@ -166,19 +167,10 @@ namespace apicea.Controllers
 
             if (System.IO.File.Exists(pdfPath))
             {
-                try
-                {
-                    byte[] abc = System.IO.File.ReadAllBytes(pdfPath);
-                    System.IO.File.WriteAllBytes(pdfPath, abc);
-                    MemoryStream ms = new MemoryStream(abc);
-                    return new FileStreamResult(ms, "application/pdf");
-                    }
-                catch (Exception e)
-                {
-
-                    throw new Exception(e.Message);
-                }
-
+                byte[] abc = System.IO.File.ReadAllBytes(pdfPath);
+                System.IO.File.WriteAllBytes(pdfPath, abc);
+                MemoryStream ms = new MemoryStream(abc);
+                return new FileStreamResult(ms, "application/pdf") { FileDownloadName = "FormatoComision-" + "V" + result?.Oficina + "-" + result?.NoViat.ToString() + "-" + result?.Fecha.ToString("yy") + ".pdf" };
             }
             else
             {
@@ -244,7 +236,7 @@ namespace apicea.Controllers
                             .AddText("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy"))
                                 .SetBold()
                             .ToCell()
-                            .AddParagraph("FECHA: " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                            .AddParagraph("FECHA: " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
                 .ToSection()
 
                 //Tabla 2
@@ -370,13 +362,13 @@ namespace apicea.Controllers
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
@@ -548,7 +540,7 @@ namespace apicea.Controllers
                             .SetHorizontalAlignment(HorizontalAlignment.Right)
                             .SetVerticalAlignment(VerticalAlignment.Center)
                             .SetPadding(2)
-                            .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                            .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
                             .ToCell()
                              .AddParagraph("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy"))
                              .SetMarginBottom(10)
@@ -573,7 +565,7 @@ namespace apicea.Controllers
                    .ToSection()
                  .AddParagraph("POR ESTE MEDIO ME PERMITO ENTREGAR A USTED CON FUNDAMENTO EN LA FRACCIÓN IX DEL ARTÍCULO 70 " +
                  "DE LA LEY GENERAL DE TRANSPARENCIA Y ACCESO A LA INFORMACIÓN PÚBLICA (LGT) PARA EL ESTADO DE " +
-                 "BAJA CALIFORNIA, EL INFORME CORRESPONDIENTE A LA COMISION NO. V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy") + ", EL CUAL SE ME FUE ASIGNADA CON FECHA DEL" + result?.FechaReg.ToString("dd") + " DE " + result?.FechaReg.ToString("MMMM").ToUpper() + " DEL PRESENTE AÑO.")
+                 "BAJA CALIFORNIA, EL INFORME CORRESPONDIENTE A LA COMISION NO. V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy") + ", EL CUAL SE ME FUE ASIGNADA CON FECHA DEL " + result?.FechaSal.ToString("dd") + " DE " + result?.FechaSal.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DEL PRESENTE AÑO.")
                  .SetMarginTop(25)
                  .ToSection()
                  .AddTable()
@@ -658,13 +650,13 @@ namespace apicea.Controllers
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
@@ -858,7 +850,7 @@ namespace apicea.Controllers
                             .SetVerticalAlignment(VerticalAlignment.Center)
                             .SetPadding(2)
 
-                            .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                            .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
                             .ToCell()
                             .AddParagraph("NO. DE OFICIO: ").SetMarginBottom(10)
                             .AddText("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy"))
@@ -887,7 +879,7 @@ namespace apicea.Controllers
                             .ToRow()
                    .ToSection()
                  .AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE " + result?.CdDestino + ", " + result?.EdoDestino +
-                 " EL DIA " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy") + ", " +
+                 " EL DIA " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy") + ", " +
                   result?.Dias.ToString() + " DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")
                  .SetMarginTop(25)
                  .ToSection()
@@ -975,7 +967,7 @@ namespace apicea.Controllers
                             .AddText("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy"))
                                 .SetBold()
                             .ToCell()
-                            .AddParagraph("FECHA: " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                            .AddParagraph("FECHA: " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
                 .ToSection()
 
                 //Tabla 2
@@ -1101,13 +1093,13 @@ namespace apicea.Controllers
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
@@ -1201,7 +1193,7 @@ namespace apicea.Controllers
                    .ToDocument().Build(reciboViatico);
             reciboViatico.Close();
             var informeActividades = new FileStream("wwwroot/files/InformeActividades.pdf", FileMode.Create);
-            DocumentBuilder.New() // Recibo Viatcios
+            DocumentBuilder.New() // Informe Actividades
                    .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
@@ -1251,7 +1243,7 @@ namespace apicea.Controllers
                             .SetHorizontalAlignment(HorizontalAlignment.Right)
                             .SetVerticalAlignment(VerticalAlignment.Center)
                             .SetPadding(2)
-                            .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM").ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
+                            .AddParagraph(result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy"))
                             .ToCell()
                              .AddParagraph("V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy"))
                              .SetMarginBottom(10)
@@ -1276,7 +1268,7 @@ namespace apicea.Controllers
                    .ToSection()
                  .AddParagraph("POR ESTE MEDIO ME PERMITO ENTREGAR A USTED CON FUNDAMENTO EN LA FRACCIÓN IX DEL ARTÍCULO 70 " +
                  "DE LA LEY GENERAL DE TRANSPARENCIA Y ACCESO A LA INFORMACIÓN PÚBLICA (LGT) PARA EL ESTADO DE " +
-                 "BAJA CALIFORNIA, EL INFORME CORRESPONDIENTE A LA COMISION NO. V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy") + ", EL CUAL SE ME FUE ASIGNADA CON FECHA DEL" + result?.FechaReg.ToString("dd") + " DE " + result?.FechaReg.ToString("MMMM").ToUpper() + " DEL PRESENTE AÑO.")
+                 "BAJA CALIFORNIA, EL INFORME CORRESPONDIENTE A LA COMISION NO. V" + result?.Oficina + "-" + result?.NoViat.ToString() + "/" + result?.Fecha.ToString("yy") + ", EL CUAL SE ME FUE ASIGNADA CON FECHA DEL " + result?.FechaReg.ToString("dd") + " DE " + result?.FechaReg.ToString("MMMM").ToUpper() + " DEL PRESENTE AÑO.")
                  .SetMarginTop(25)
                  .ToSection()
                  .AddTable()
@@ -1361,13 +1353,13 @@ namespace apicea.Controllers
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
                             .SetHorizontalAlignment(HorizontalAlignment.Center)
                             .SetVerticalAlignment(VerticalAlignment.Center)
-                            .AddParagraph(result?.FechaSal.ToString("dd/M/yyyy"))
+                            .AddParagraph(result?.FechaReg.ToString("dd/M/yyyy"))
                             .ToCell()
                             .ToRow()
                         .AddCell()
