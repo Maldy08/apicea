@@ -46,10 +46,12 @@ namespace apicea.Controllers
             var pdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files", "FormatoComision.pdf");
             var logoceaybc = Path.Combine(imageDir, "logobcycea.jpg");
             DocumentBuilder.New() // Formato Comisión
+                
 
                .AddSection().
                SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                .SetOrientation(PageOrientation.Portrait)
+               .AddFooterToBothPages(10).AddParagraph("AW-CEA").SetFontSize(5).ToSection()
            .AddTable()
                .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
                .AddColumnToTable("", XUnit.FromPercent(40))
@@ -193,6 +195,7 @@ namespace apicea.Controllers
              .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
+                .AddFooterToBothPages(10).AddParagraph("AW-CEA").SetFontSize(5).ToSection()
             .AddTable()
                 .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
                 .AddColumnToTable("", XUnit.FromPercent(40))
@@ -494,6 +497,7 @@ namespace apicea.Controllers
                 .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
+                .AddFooterToBothPages(10).AddParagraph("AW-CEA").SetFontSize(5).ToSection()
             .AddTable()
                 .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
                 .AddColumnToTable("", XUnit.FromPercent(40))
@@ -804,6 +808,7 @@ namespace apicea.Controllers
                 .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
+                .AddFooterToBothPages(10).AddParagraph("AW-CEA").SetFontSize(5).ToSection()
             .AddTable()
                 .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
                 .AddColumnToTable("", XUnit.FromPercent(40))
@@ -924,6 +929,7 @@ namespace apicea.Controllers
              .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
+                .AddFooterToBothPages(10).AddParagraph("AW-CEA").SetFontSize(5).ToSection()
             .AddTable()
                 .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
                 .AddColumnToTable("", XUnit.FromPercent(40))
@@ -1197,6 +1203,7 @@ namespace apicea.Controllers
                    .AddSection().
                 SetSize(Gehtsoft.PDFFlow.Models.Enumerations.PaperSize.Letter)
                 .SetOrientation(PageOrientation.Portrait)
+                .AddFooterToBothPages(10).AddParagraph("AW-CEA").SetFontSize(5).ToSection()
             .AddTable()
                 .SetContentRowStyleBorder(borderBuilder => borderBuilder.SetStroke(Stroke.None))
                 .AddColumnToTable("", XUnit.FromPercent(40))
@@ -1477,9 +1484,6 @@ namespace apicea.Controllers
             //Build a file:
             .ToDocument().Build(informeActividades);
             informeActividades.Close();
-
-            //FormatoComisionPDF(result?.Ejercicio, result?.Oficina, result?.NoViat);
-
 
             //Junta PDFs
             using (PdfDocument one = PdfReader.Open("wwwroot/files/FormatoComision.pdf", PdfDocumentOpenMode.Import))
