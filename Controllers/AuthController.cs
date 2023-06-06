@@ -27,8 +27,8 @@ namespace apicea.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Usuarios>> Login(string user, string password)
         {
-            var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.Equals(user)
-                && u.Pass.Equals(password));
+            var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.ToUpper().Equals(user.ToUpper())
+                && u.Pass.ToUpper().Equals(password.ToUpper()));
 
             if (usuario != null)
                 //return Ok(new AuthenticateResponse { Token = CreateToken(usuario), usuario = usuario });

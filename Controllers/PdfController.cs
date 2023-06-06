@@ -738,7 +738,7 @@ namespace apicea.Controllers
                             .SetPadding(2)
                             .SetFontSize(7)
 
-                            .AddParagraph("CONCLUSIONES Y RESUTLADOS")
+                            .AddParagraph("CONCLUSIONES Y RESULTADOS")
                             .ToRow()
                 .ToSection()
                 .AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
@@ -1444,7 +1444,7 @@ namespace apicea.Controllers
                             .SetPadding(2)
                             .SetFontSize(7)
 
-                            .AddParagraph("CONCLUSIONES Y RESUTLADOS")
+                            .AddParagraph("CONCLUSIONES Y RESULTADOS")
                             .ToRow()
                 .ToSection()
                 .AddTable().AddColumnToTable("", XUnit.FromPercent(100)).AddRow().AddCell()
