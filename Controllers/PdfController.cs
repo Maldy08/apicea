@@ -127,7 +127,7 @@ namespace apicea.Controllers
                            .ToRow()
                   .ToSection()
                 .AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE " + result?.CdDestino + ", " + result?.EdoDestino +
-                " EL DIA " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy") + ", " +
+                " EL DIA " + result?.FechaSal.ToString("dd") + " DE " + result?.FechaSal.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.FechaSal.ToString("yyyy") + ", " +
                  result?.Dias.ToString() + " DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")
                 .SetMarginTop(25)
                 .ToSection()
@@ -884,7 +884,7 @@ namespace apicea.Controllers
                             .ToRow()
                    .ToSection()
                  .AddParagraph("POR MEDIO DE LA PRESENTE SE LE COMUNICA A USTED, QUE DEBERA TRASLADARSE A LA CIUDAD DE " + result?.CdDestino + ", " + result?.EdoDestino +
-                 " EL DIA " + result?.Fecha.ToString("dd") + " DE " + result?.Fecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.Fecha.ToString("yyyy") + ", " +
+                 " EL DIA " + result?.FechaSal.ToString("dd") + " DE " + result?.FechaSal.ToString("MMMM", CultureInfo.GetCultureInfo("es-MX")).ToUpper() + " DE " + result?.FechaSal.ToString("yyyy") + ", " +
                   result?.Dias.ToString() + " DIA(S) DEL PRESENTE AÑO CON LA FINALIDAD DE:")
                  .SetMarginTop(25)
                  .ToSection()

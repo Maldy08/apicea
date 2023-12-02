@@ -37,6 +37,32 @@ namespace apicea.Controllers
             return BadRequest( new AuthResponse { Ok = false } );
         }
 
+        [HttpPut("cambiopass")]
+        public async Task<ActionResult<Usuarios>> UpdatePassword(string user, string newPassword)
+        {
+            var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Login.ToUpper() == user.ToUpper());
+            if (usuario != null) { 
+                usuario.Pass = newPassword;
+                      
+               try
+                {
+                   await _dbContext.SaveChangesAsync();
+                   return Ok(usuario);
+                }
+                catch (Exception e)
+                {
+
+                    return BadRequest(e.ToString());
+                }
+
+            }
+
+            else { 
+                return BadRequest("Error al actualizar el registro");
+            }
+
+        }
+
         [HttpGet("usuarios")]
         public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
